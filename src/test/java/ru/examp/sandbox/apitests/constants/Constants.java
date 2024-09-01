@@ -7,4 +7,5 @@ public interface Constants {
     String AUTH_ENDPOINT = "/auth";
     String BOOKING_ENDPOINT = "/booking";
     String BOOKING_ID = "/111";
+
 }
