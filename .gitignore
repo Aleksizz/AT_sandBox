@@ -12,6 +12,7 @@ target/
 */META-INF/*
 /allure-results
 allure-results/
+/.idea
 
 # Packaged files #
 *.jar

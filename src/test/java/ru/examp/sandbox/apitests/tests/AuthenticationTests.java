@@ -8,12 +8,10 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
 import static org.hamcrest.Matchers.containsString;
+import static ru.examp.sandbox.apitests.constants.Constants.*;
 
- class AuthenticationTests {
-    private static final String USER = "admin";
-    private static final String PASSWORD = "password123";
-    private static final String BASE_URL = "https://restful-booker.herokuapp.com";
-    private static final String AUTH_ENDPOINT = "/auth";
+class AuthenticationTests {
+
 
     @DisplayName("Проверка успешной аутентификации")
     @Test
@@ -23,11 +21,13 @@ import static org.hamcrest.Matchers.containsString;
         request.put("password", PASSWORD);
 
         RestAssured.given()
+                .log().ifValidationFails()
                 .contentType(ContentType.JSON)
                 .body(request)
                 .when()
                 .post(BASE_URL + AUTH_ENDPOINT)
                 .then()
+                .log().all()
                 .assertThat()
                 .statusCode(HttpStatus.SC_OK)
                 .contentType(ContentType.JSON)
@@ -42,11 +42,13 @@ import static org.hamcrest.Matchers.containsString;
         request.put("password", PASSWORD);
 
         RestAssured.given()
+                .log().ifValidationFails()
                 .contentType(ContentType.JSON)
                 .body(request)
                 .when()
                 .post(BASE_URL + AUTH_ENDPOINT)
                 .then()
+                .log().all()
                 .assertThat()
                 .statusCode(HttpStatus.SC_OK)
                 .contentType(ContentType.JSON)
