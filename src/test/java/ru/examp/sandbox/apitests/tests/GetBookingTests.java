@@ -30,7 +30,6 @@ import static ru.examp.sandbox.apitests.constants.Constants.BOOKING_ENDPOINT;
                 .get(BASE_URL + BOOKING_ENDPOINT+ BOOKING_ID)
                 .then()
                 .log().all()
-                .assertThat()
                 .statusCode(HttpStatus.SC_OK)
                 .contentType(ContentType.JSON)
                 .body("firstname", equalTo("Susan"))

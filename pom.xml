@@ -71,6 +71,11 @@
         </dependency>
         <!-- БИБЛИОТЕКА ДЛЯ РАБОТЫ C JSON НА ОСНОВЕ УТВЕРЖДЕНИЙ -->
         <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.17.2</version>
+        </dependency>
+        <dependency>
             <groupId>net.javacrumbs.json-unit</groupId>
             <artifactId>json-unit</artifactId>
             <version>3.4.1</version>
