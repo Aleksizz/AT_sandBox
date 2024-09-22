@@ -1,7 +1,6 @@
 package ru.examp.sandbox.apitests.tests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 
@@ -15,15 +14,15 @@ import static ru.examp.sandbox.apitests.constants.Constants.*;
 
 class AuthenticationTests {
     ObjectMapper objectMapper = new ObjectMapper();
-    AuthCreds authCreds = new AuthCreds(USER, PASSWORD);
+
 
 
     @SneakyThrows
     @DisplayName("Проверка успешной аутентификации")
     @Test
      void authSuccessTest() {
+        AuthCreds authCreds = new AuthCreds(USER, PASSWORD);
         String authBody = objectMapper
-                .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
                         .writeValueAsString(authCreds);
 
         RestAssured.given()
@@ -33,19 +32,46 @@ class AuthenticationTests {
                 .post(BASE_URL + AUTH_ENDPOINT)
                 .then()
                 .statusCode(HttpStatus.SC_OK)
+                .extract()
+                .response()
+                .body()
+                .asString()
+                .contains("token")
                 ;
     }
 
     @SneakyThrows
-    @DisplayName("Проверка НЕ успешной аутентификации")
+    @DisplayName("Проверка НЕ успешной аутентификации с неверным логином")
     @Test
-     void authUnSuccessTest() {
+     void authUnSuccessTestWrongLogin() {
+        AuthCreds authCreds = new AuthCreds(BAD_USER, PASSWORD);
         String authBody = objectMapper
-                .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
                 .writeValueAsString(authCreds);
 
         RestAssured.given()
-                .log().ifValidationFails()
+                .log().all()
+                .contentType(ContentType.JSON)
+                .body(authBody)
+                .when()
+                .post(BASE_URL + AUTH_ENDPOINT)
+                .then()
+                .log().all()
+                .assertThat()
+                .statusCode(HttpStatus.SC_OK)
+                .contentType(ContentType.JSON)
+                .body(containsString("\"Bad credentials\""));
+    }
+
+    @SneakyThrows
+    @DisplayName("Проверка НЕ успешной аутентификации с неверным паролем")
+    @Test
+    void authUnSuccessTestWrongPassword() {
+        AuthCreds authCreds = new AuthCreds(USER, BAD_PASSWORD);
+        String authBody = objectMapper
+                .writeValueAsString(authCreds);
+
+        RestAssured.given()
+                .log().all()
                 .contentType(ContentType.JSON)
                 .body(authBody)
                 .when()

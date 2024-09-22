@@ -1,44 +1,41 @@
 package ru.examp.sandbox.apitests.tests;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.response.ResponseBody;
 import org.apache.http.HttpStatus;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static ru.examp.sandbox.apitests.constants.Constants.*;
 import static ru.examp.sandbox.apitests.constants.Constants.AUTH_ENDPOINT;
 
 class BaseAuth {
-    String token = "";
+    ObjectMapper objectMapper = new ObjectMapper();
 
-    public BaseAuth() {
-    }
-
-    String  baseAuthAndGetToken(){
+    String token;
 
 
-         Map<String, String> request = new HashMap<>();
-         request.put("username", USER);
-         request.put("password", PASSWORD);
+    String  baseAuthAndGetToken() throws JsonProcessingException {
+        AuthCreds authCreds = new AuthCreds(USER, PASSWORD);
 
-         token = RestAssured.given()
-                 .contentType(ContentType.JSON)
-                 .body(request)
-                 .when()
-                 .post(BASE_URL + AUTH_ENDPOINT)
-                 .then()
-                 .log().all()
-                 .statusCode(HttpStatus.SC_OK)
-                 .contentType(ContentType.JSON)
-                 .extract()
-                 .body()
-                 .asString()
-                 .substring(9, 26)
+        String authBody = objectMapper
+                .writeValueAsString(authCreds);
 
-         ;
+        ResponseBody body = RestAssured.given()
+                .log().all()
+                .contentType(ContentType.JSON)
+                .body(authBody)
+                .post(BASE_URL + AUTH_ENDPOINT)
+                .then()
+                .statusCode(HttpStatus.SC_OK)
+                .extract()
+                .response()
+                .body()
+                ;
 
-         return token;
+        token = body.asString().substring(9, body.asString().length() - 1);
+
+        return token;
      }
 }

@@ -1,5 +1,6 @@
 package ru.examp.sandbox.apitests.tests;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.apache.http.HttpStatus;
@@ -8,18 +9,18 @@ import org.junit.jupiter.api.Test;
 
 import static ru.examp.sandbox.apitests.constants.Constants.*;
 
- class PutUpdateBookingtests {
+ class PutUpdateBookingTests {
 
     @DisplayName("Проверка успешного обновления бронирования")
     @Test
-    void updateBookingSuccessTest() {
+    void updateBookingSuccessTest() throws JsonProcessingException {
 
-        BaseAuth bt = new BaseAuth();
+       BaseAuth bt = new BaseAuth();
         bt.baseAuthAndGetToken();
 
         RestAssured.given()
                 .contentType(ContentType.JSON)
-                .log().ifValidationFails()
+                .log().all()
                 .accept(ContentType.JSON)
                 .cookie("token", bt.token)
                 .body("{"
